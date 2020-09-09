@@ -1,0 +1,18 @@
+<div *ngIf="user">
+
+    <h2>User Details:</h2>
+    <div>
+        <label>Name:{{user.username}}
+          </label>
+        <br/>
+        <label>Email:
+            <input name ="user.email" [(ngModel)]="user.email"/>
+          </label>
+        <!-- <br/>
+        <label>Groupadmin:</label>
+        <input [ngModel]="user.ofGroupAdminsRole" [checked]="user.ofGroupAdminsRole" type="checkbox" (change)="checkClicked(user.ofGroupAdminsRole)"> -->
+    </div>
+    <br/>
+    <button (click)="goBack()">go back</button>
+    <button (click)="save()">save</button>
+</div>

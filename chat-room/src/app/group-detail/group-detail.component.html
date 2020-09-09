@@ -1,0 +1,29 @@
+<h2>Users: </h2>
+
+<ul class="list-group">
+    <li class="list-group-item" *ngFor="let user of users">
+        <a routerLink="/userdetail/{{user.username}}">
+            {{user.username}}
+        </a>
+
+        <button type="button" class="btn btn-primary" title="edit user" (click)="edit(user)">Edit</button> &nbsp;
+        <button type="button" class="btn btn-primary" title="delete user" (click)="delete(user)">Delete</button>
+    </li>
+</ul>
+
+<div>
+    <!-- <label><h3>Add new user into group</h3></label> -->
+    <br/>
+    <label>User name:
+      <input #userName />
+    </label>
+    <br/>
+    <label>Email:
+        <input #userEmail />
+      </label>
+    <br/>
+    <!-- (click) passes input value to add() and then clears the input -->
+    <button type="button" class="btn btn-primary" (click)="add(userName.value,userEmail.value); userName.value=''; userEmail.value='' ">
+      Add
+    </button>
+</div>
