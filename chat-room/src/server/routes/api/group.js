@@ -1,32 +1,24 @@
-var fs = require("fs");
+module.exports = function(db, app, ObjectID) {
 
-module.exports = function(app, path) {
-
-    var bodyParser = require('body-parser');
-
-    app.use(bodyParser.json());
-
+    //get all the groups
     app.get('/api/groups', function(req, res) {
-        fs.readFile("groups.json", 'utf8', function(err, data) {
-            // console.log(data);
-            res.end(data);
+        const collection = db.collection('groups');
+        collection.find({}).toArray((err, data) => {
+            res.send(data);
         });
     });
 
-    // get a certain group
-    app.get('/api/groups/:groupid', function(req, res) {
+    //get one group
+    app.get('/api/groups/:id', function(req, res) {
 
-        const groupid = req.params.groupid;
-        // console.log(username);
+        groupId = req.params.id;
+        // console.log(groupId);
 
-        fs.readFile("groups.json", 'utf8', function(err, data) {
-            groups = JSON.parse(data);
-            let group = groups.filter(
-                item => item.id == groupid
-            )[0]; // filter to find the specified username
-
-            res.send(group);
-
+        var objectid = new ObjectID(groupId);
+        // console.log("objectid::" + objectid);
+        const collection = db.collection('groups');
+        collection.find({ _id: objectid }).limit(1).toArray((err, data) => {
+            res.send(data);
         });
     });
 
@@ -37,54 +29,66 @@ module.exports = function(app, path) {
             return res.sendStatus(400);
         }
 
-        var group = {};
+        group = req.body;
+        // console.log("group::" + group);
+        const collection = db.collection('groups');
+        //check for duplicate id's
+        collection.find({ 'name': group.name }).count((err, count) => {
+            if (count == 0) {
+                //if no duplicate
+                collection.insertOne(group, (err, dbres) => {
 
-
-        fs.readFile("groups.json", 'utf8', function(err, data) {
-            data = JSON.parse(data);
-            // find the maximum id number in file,then add 1 
-            group.id = Math.max.apply(Math, data.map(function(o) { return o.id; })) + 1;
-            group.name = req.body.name;
-            console.log(group.name);
-            data.push(group);
-            var jsonContent = JSON.stringify(data);
-
-            fs.writeFile("groups.json", jsonContent, 'utf8', function(err) {
-                if (err) throw err;
-                console.log('complete');
-                console.log("JSON file has been saved.");
-                // res.status(200).json({
-                //     isSuccess: true
-                // });
-                res.send(group);
-            });
+                    if (err) throw err;
+                    let num = dbres.insertedCount;
+                    console.log("insertedCount::" + num);
+                    //send back to client number of items instered and no error message
+                    res.send({ 'num': num, err: null });
+                })
+            } else {
+                //On Error send back error message
+                res.send({ 'num': 0, 'err': "duplicate item" });
+            }
         });
+
     });
 
-    // delete a group
+    //update a group
+    app.put('/api/groups', function(req, res) {
+
+        if (!req.body) {
+            return res.sendStatus(400)
+        }
+
+        group = req.body;
+        //console.log(req);
+        var objectid = new ObjectID(group.objid);
+        const collection = db.collection('groups');
+        collection.updateOne({ _id: objectid }, { $set: { id: group.id, name: group.name } }, () => {
+            //Return a response to the client to let them know the delete was successful
+            res.send({ 'ok': group.objid });
+        })
+
+    });
+
+    //delete group
     app.delete('/api/groups/:id', function(req, res) {
+
         if (!req.body) {
             return res.sendStatus(400);
         }
 
-        id = req.params.id;
-        console.log(id);
+        groupId = req.params.id;
+        // console.log(groupId);
 
-        fs.readFile("groups.json", 'utf8', function(err, data) {
-            data = JSON.parse(data);
-            // console.log(data);
-            data = data.filter(item => item.id != id);
+        //create a new mongo Object ID from the passed in _id
+        var objectid = new ObjectID(groupId);
+        const collection = db.collection('groups');
 
-            var jsonContent = JSON.stringify(data);
+        //Delete a single item based on its unique ID.
+        collection.deleteOne({ _id: objectid }, (err, docs) => {
+            res.send({ ok: 1 });
+        })
 
-            fs.writeFile("groups.json", jsonContent, 'utf8', function(err) {
-                if (err) throw err;
-                console.log('complete');
-                console.log("JSON file has been saved.");
-                res.status(200).json({
-                    isSuccess: true
-                });
-            });
-        });
+
     });
 }

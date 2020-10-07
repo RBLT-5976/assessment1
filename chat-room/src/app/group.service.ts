@@ -27,7 +27,7 @@ export class GroupService {
   }
 
   /** GET hero by id. Will 404 if id not found */
-  getGroup(id: number): Observable<Group> {
+  getGroup(id: string): Observable<Group> {
     const url = `${this.groupsUrl}/${id}`;
     return this.http.get<Group>(url);
   }
@@ -39,9 +39,9 @@ export class GroupService {
 
   /** DELETE: delete the hero from the server */
   deleteGroup(group: Group | number): Observable<Group> {
-    const id = typeof group === "number" ? group : group.id;
+    const id = typeof group === "number" ? group : group._id;
     const url = `${this.groupsUrl}/${id}`;
-
+    console.log(id);
     return this.http.delete<Group>(url, this.httpOptions);
   }
 

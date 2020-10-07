@@ -1,0 +1,19 @@
+<h2>Welcome to Channel {{ channelName }}</h2>
+<div class="column">
+    <form class="form-inline">
+        <div class="form-group">
+            <input type="text" class="form-control" id="messagetext" [(ngModel)]="messagetext" name="messagetext" /> &nbsp;
+            <button type="button" (click)="chat($event)" class="form-control btn btn-primary">
+        <i class="fa fa-comments"></i> Chat
+      </button>
+        </div>
+    </form>
+    <div class="card" style="width: 100%" *ngFor="let message of messages">
+        <div class="card-body">
+            <p class="card-text">
+                <span class="small">{{ message.messagetime }} </span><br />
+                <img class="mb-4" src="../../assets/av2.png" alt="" width="30" height="30" /> {{ message.user.username }} : {{ message.messagetext }}
+            </p>
+        </div>
+    </div>
+</div>

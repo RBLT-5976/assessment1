@@ -3,8 +3,10 @@ import { ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 
-import { Group, User } from "../entity";
+import { Group, User, Channel } from "../entity";
 import { UserService } from "../user.service";
+import { ChannelService } from "../channel.service";
+import { GroupService } from "../group.service";
 @Component({
   selector: "app-group-detail",
   templateUrl: "./group-detail.component.html",
@@ -13,55 +15,68 @@ import { UserService } from "../user.service";
 export class GroupDetailComponent implements OnInit {
   @Input() group: Group;
 
-  users;
-  // groupName: string;
+  channels;
+  groupName: string;
   groupId: string;
+
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private channelService: ChannelService,
+    private groupService: GroupService,
     private location: Location,
     private router: Router
   ) {}
 
   ngOnInit() {
-    // this.groupName =
     this.groupId = this.route.snapshot.paramMap.get("id");
-    this.getUsers();
-  }
 
-  getUsers(): void {
-    this.userService.getUsers().subscribe(users => (this.users = users));
-  }
-
-  // add a user with username and email
-  add(username: string, email: string): void {
-    username = username.trim();
-    email = email.trim();
-    if (!username) {
-      return;
-    }
-    if (!email) {
-      return;
-    }
-
-    this.userService.addUser({ username, email } as User).subscribe(user => {
-      this.users.push(user);
+    this.groupService.getGroup(this.groupId).subscribe(group => {
+      console.log("group::" + JSON.stringify(group));
+      this.groupName = group[0].name;
     });
+
+    this.getChannels();
   }
 
-  edit(user) {
-    this.router.navigate(["/userdetail/" + user.username]);
+  getChannels(): void {
+    this.channelService
+      .getChannelsBy(this.groupId)
+      .subscribe(channels => (this.channels = channels));
   }
 
-  // updateUser(user: User): void {
-  //   user.groupList.push(this.groupId);
-  //   this.userService.updateUser(user).subscribe(user => {
-  //     this.users.push(user);
-  //   });
-  // }
+  // add a channel with name
+  add(name: string): void {
+    name = name.trim();
+    const group_id = this.groupId.trim();
 
-  delete(user: User): void {
-    this.users = this.users.filter(g => g !== user);
-    this.userService.deleteUser(user).subscribe();
+    if (!name) {
+      return;
+    }
+    if (!group_id) {
+      return;
+    }
+
+    this.channelService
+      .addChannel({ name, group_id } as Channel)
+      .subscribe(channel => {
+        // console.log(group);
+        this.getChannels();
+      });
+  }
+
+  //   edit(user) {
+  //     this.router.navigate(["/userdetail/" + user.username]);
+  //   }
+
+  //   // updateUser(user: User): void {
+  //   //   user.groupList.push(this.groupId);
+  //   //   this.userService.updateUser(user).subscribe(user => {
+  //   //     this.users.push(user);
+  //   //   });
+  //   // }
+
+  delete(channel: Channel): void {
+    this.channels = this.channels.filter(c => c !== channel);
+    this.channelService.deleteChannel(channel).subscribe();
   }
 }

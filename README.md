@@ -1,4 +1,4 @@
-# A1 Chat
+# A2 Chat Room
 
 ## The organization of Git repository
 

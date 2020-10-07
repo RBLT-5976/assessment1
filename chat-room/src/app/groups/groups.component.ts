@@ -34,8 +34,7 @@ export class GroupsComponent implements OnInit {
       return;
     }
     this.groupService.addGroup({ name } as Group).subscribe(group => {
-      // console.log(group);
-      this.groups.push(group);
+      this.getGroups();
     });
   }
 

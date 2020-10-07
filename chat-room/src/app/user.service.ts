@@ -12,7 +12,7 @@ import { MessageService } from "./message.service";
 })
 export class UserService {
   private usersUrl = "http://localhost:3000/api/users"; // URL to web api
-  private loginUrl = "http://localhost:3000/api/login";
+  private loginUrl = "http://localhost:3000/api/checkuser";
   httpOptions = {
     headers: new HttpHeaders({ "Content-Type": "application/json" })
   };

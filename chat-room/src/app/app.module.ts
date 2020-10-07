@@ -11,6 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { GroupDetailComponent } from './group-detail/group-detail.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { GroupDetailComponent } from './group-detail/group-detail.component';
     LoginComponent,
     LogoutComponent,
     UserDetailComponent,
-    GroupDetailComponent
+    GroupDetailComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
